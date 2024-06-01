@@ -40,8 +40,7 @@ MyString::MyString(const MyString& other)
 
 MyString::MyString(MyString&& other) noexcept : str(other.str), length(other.length)
 {
-    other.str = nullptr;
-    other.length = 0;
+    other.copy("\0");
 }
 
 MyString::~MyString()
@@ -80,8 +79,7 @@ MyString& MyString::operator=(MyString&& other) noexcept
         erase();
         str = other.str;
         length = other.length;
-        other.str = nullptr;
-        other.length = 0;
+        other.copy("\0");
     }
 
     return *this;
@@ -148,6 +146,12 @@ MyString MyString::operator+(char ch) const
     result.length = length + 1;
 
     result.str = new(nothrow) char[result.length + 1];
+
+    if (!result.str)
+    {
+        cout << "Problem with memory!\n";
+        return nullptr;
+    }
 
     strcpy(result.str, str);
 
