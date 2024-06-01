@@ -17,9 +17,17 @@ public:
     TableRow& operator=(const TableRow& other);
     ~TableRow();
 
+    TableRow(const MyString* data, int size);
+
     TableRow(TableRow&& other) noexcept;
 
     TableRow& operator=(TableRow&& other) noexcept;
 
     MyString& operator[](int index);
+
+    int getSize()const;
+
+    friend ostream& operator<<(ostream& os, const TableRow& row);
 };
+
+ostream& operator<<(ostream& os, const TableRow& row);

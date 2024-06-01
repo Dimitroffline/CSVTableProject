@@ -15,16 +15,20 @@ private:
 public:
     Table();
     Table(const Table& other);
+    Table& operator=(const Table& other);
+    ~Table();
+
+    Table(const TableRow* rows, int size);
 
     Table(Table&& other) noexcept;
 
-    Table& operator=(const Table& other);
-
     Table& operator=(Table&& other) noexcept;
-
-    ~Table();
 
     TableRow& operator[](int index);
 
     int rowCount() const;
+
+    friend ostream& operator<<(ostream& os, const Table& table);
 };
+
+ostream& operator<<(ostream& os, const Table& table);

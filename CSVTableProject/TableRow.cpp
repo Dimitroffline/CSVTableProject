@@ -47,6 +47,11 @@ TableRow::~TableRow()
 	erase();
 }
 
+TableRow::TableRow(const MyString* data, int size)
+{
+	copy(data, size);
+}
+
 TableRow::TableRow(TableRow&& other) noexcept : size(other.size), data(other.data)
 {
 	other.size = 0;
@@ -73,4 +78,19 @@ MyString& TableRow::operator[](int index)
 		throw out_of_range("Index out of range");
 
 	return data[index];
+}
+
+int TableRow::getSize() const
+{
+	return size;
+}
+
+ostream& operator<<(ostream& os, const TableRow& row)
+{
+	for (int i = 0; i < row.size; i++)
+		os << row.data[i] << " ";
+
+	os << endl;
+	
+	return os;
 }

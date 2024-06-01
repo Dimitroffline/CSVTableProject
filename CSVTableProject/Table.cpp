@@ -92,6 +92,11 @@ Table::~Table()
     erase();
 }
 
+Table::Table(const TableRow* rows, int size)
+{
+    copy(rows, size, size);
+}
+
 TableRow& Table::operator[](int index)
 {
     if (index < 0 || index >= size)
@@ -103,4 +108,14 @@ TableRow& Table::operator[](int index)
 int Table::rowCount() const
 {
     return size;
+}
+
+ostream& operator<<(ostream& os, const Table& table)
+{
+    for (int i = 0; i < table.size; i++)
+        os << table.rows[i];
+
+    os << endl;
+
+    return os;
 }

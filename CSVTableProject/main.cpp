@@ -1,4 +1,4 @@
-#include "MyString.h"
+#include "Table.h"
 
 int main()
 {

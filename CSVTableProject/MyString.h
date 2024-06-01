@@ -14,14 +14,15 @@ private:
 
 public:
     MyString();
-    MyString(const char* s);
     MyString(const MyString& other);
-    MyString(MyString&& other) noexcept;
+    MyString& operator=(const MyString& other);
     ~MyString();
 
-    MyString& operator=(MyString&& other) noexcept;
+    MyString(const char* s);
 
-    MyString& operator=(const MyString& other);
+    MyString(MyString&& other) noexcept;
+
+    MyString& operator=(MyString&& other) noexcept;
 
     bool operator==(const MyString& other) const;
 
