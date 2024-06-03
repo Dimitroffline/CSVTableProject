@@ -34,9 +34,17 @@ public:
 
     char& operator[](int index);
 
+    const char& operator[](int index)const;
+
+    bool isEmpty()const;
+
     int size() const;
 
+    const char* cstr()const;
+
     friend ostream& operator<<(ostream& os, const MyString& s);
+    friend istream& getline(istream& is, MyString& str);
 };
 
+istream& getline(istream& is, MyString& str);
 ostream& operator<<(ostream& os, const MyString& s);

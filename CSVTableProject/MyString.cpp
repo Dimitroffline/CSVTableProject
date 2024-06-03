@@ -139,6 +139,19 @@ char& MyString::operator[](int index)
     return str[index];
 }
 
+const char* MyString::cstr() const
+{
+    return str;
+}
+
+const char& MyString::operator[](int index)const
+{
+    if (index < 0 || index >= length)
+        throw out_of_range("Index out of range");
+
+    return str[index];
+}
+
 MyString MyString::operator+(char ch) const
 {
     MyString result;
@@ -166,8 +179,30 @@ int MyString::size() const
     return length;
 }
 
+bool MyString::isEmpty() const
+{
+    return (length == 0);
+}
+
 ostream& operator<<(ostream& os, const MyString& s)
 {
     os << s.str;
     return os;
+}
+
+istream& getline(istream& is, MyString& str)
+{
+    str.erase();
+    str.copy("\0");
+
+    char c;
+    while (is.get(c) && c != '\n')
+        str = str + c;
+
+    if (is.eof() && str.size() > 0)
+    {
+        is.clear();
+    }
+
+    return is;
 }

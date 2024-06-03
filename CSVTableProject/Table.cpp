@@ -110,12 +110,31 @@ int Table::rowCount() const
     return size;
 }
 
+void Table::addRow(const TableRow& row)
+{
+    if (size == capacity)
+    {
+        resize(capacity == 0 ? 1 : capacity * 2);
+    }
+
+    rows[size++] = row;
+}
+
+void Table::addRow(TableRow&& row)
+{
+    if (size == capacity)
+    {
+        resize(capacity == 0 ? 1 : capacity * 2);
+    }
+    rows[size++] = std::move(row);
+}
+
 ostream& operator<<(ostream& os, const Table& table)
 {
     for (int i = 0; i < table.size; i++)
+    {
         os << table.rows[i];
-
-    os << endl;
+    }
 
     return os;
 }

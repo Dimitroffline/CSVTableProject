@@ -80,6 +80,48 @@ MyString& TableRow::operator[](int index)
 	return data[index];
 }
 
+const MyString& TableRow::operator[](int index) const
+{
+	if (index < 0 || index >= size)
+		throw out_of_range("Index out of range");
+
+	return data[index];
+}
+
+void TableRow::parseFromFile(const MyString& data, int size)
+{
+	erase();
+
+	this->data = new(nothrow) MyString[size];
+
+	if (!this->data)
+	{
+		cout << "Trouble with memory.\n";
+		this->size = 0;
+		return;
+	}
+
+	this->size = size;
+
+	int len = data.size();
+	int ind = 0;
+	MyString buff("");
+
+	for (int i = 0; i < len; i++)
+	{
+		if (data[i] == ' ' && !buff.isEmpty())
+		{
+			this->data[ind++] = buff;
+			buff = "";
+		}
+		else
+			buff = buff + data[i];
+	}
+
+	if (!buff.isEmpty())
+		this->data[ind] = buff;
+}
+
 int TableRow::getSize() const
 {
 	return size;
@@ -88,9 +130,12 @@ int TableRow::getSize() const
 ostream& operator<<(ostream& os, const TableRow& row)
 {
 	for (int i = 0; i < row.size; i++)
-		os << row.data[i] << " ";
+	{
+		os << row.data[i];
 
-	os << endl;
+		if (i < row.size - 1)
+			os << ' ';
+	}
 	
 	return os;
 }

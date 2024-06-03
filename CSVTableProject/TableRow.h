@@ -25,6 +25,10 @@ public:
 
     MyString& operator[](int index);
 
+    const MyString& operator[](int index)const;
+
+    void parseFromFile(const MyString& data, int size);
+
     int getSize()const;
 
     friend ostream& operator<<(ostream& os, const TableRow& row);

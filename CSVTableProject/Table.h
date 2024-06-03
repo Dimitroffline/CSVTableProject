@@ -28,6 +28,10 @@ public:
 
     int rowCount() const;
 
+    void addRow(const TableRow& row);
+
+    void addRow(TableRow&& row);
+
     friend ostream& operator<<(ostream& os, const Table& table);
 };
 
