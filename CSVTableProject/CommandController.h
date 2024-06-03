@@ -13,15 +13,17 @@ private:
 
 	CommandController() {}
 
+	bool loadFromFile(const char* filePath);
+	bool saveToFile();
+	bool saveToFile(const char* filePath);
+
 public:
 	CommandController(const CommandController& other) = delete;
 	CommandController& operator=(const CommandController& othewr) = delete;
 
 	static CommandController* Instance();
+
+	bool execute(const MyString& input);
 	
 	static void Release();
-
-	bool loadFromFile(const char* filePath);
-	bool saveToFile();
-	bool saveToFile(const char* filePath);
 };

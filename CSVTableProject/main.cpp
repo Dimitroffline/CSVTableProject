@@ -2,10 +2,17 @@
 
 int main()
 {
-	CommandController::Instance()->loadFromFile("test.csv");
+	MyString line;
 
-	CommandController::Instance()->saveToFile("result.csv");
+	cout << ">";
 
+	while (getline(cin, line))
+	{
+		if (CommandController::Instance()->execute(line))
+			break;
+
+		cout << ">";
+	}
 
 	CommandController::Release();
 	return 0;
