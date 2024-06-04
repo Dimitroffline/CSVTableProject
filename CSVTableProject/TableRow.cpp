@@ -88,6 +88,17 @@ const MyString& TableRow::operator[](int index) const
 	return data[index];
 }
 
+void TableRow::removeElement(int index)
+{
+	if (index < 0 || index >= size)
+		return;
+
+	for (int i = index; i < size - 1; i++)
+		data[i] = data[i + 1];
+
+	--size;
+}
+
 void TableRow::parseFromFile(const MyString& data, int size)
 {
 	erase();

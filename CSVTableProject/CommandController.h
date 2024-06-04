@@ -7,8 +7,10 @@ class CommandController
 {
 private:
 	Table table;
+	Table undoTable;
 	Command command;
 	MyString filePath;
+	bool hasChanged = false;
 	static CommandController* pInstance;
 
 	CommandController() {}

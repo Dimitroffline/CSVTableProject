@@ -27,6 +27,8 @@ public:
 
     const MyString& operator[](int index)const;
 
+    void removeElement(int index);
+
     void parseFromFile(const MyString& data, int size);
 
     int getSize()const;

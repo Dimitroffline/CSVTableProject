@@ -1,5 +1,22 @@
 #include "MyString.h"
 
+
+int power(int base, int pwr)
+{
+    int result = 1;
+
+    if (pwr == 0)
+        return 1;
+
+    else
+    {
+        for (int i = 0; i < pwr; i++)
+            result *= base;
+    }
+
+    return result;
+}
+
 void MyString::copy(const char* str)
 {
     if (!str)
@@ -137,6 +154,22 @@ char& MyString::operator[](int index)
         throw out_of_range("Index out of range");
 
     return str[index];
+}
+
+bool MyString::toInt(int& result)const
+{
+    result = 0;
+    int counter = 0;
+
+    for (int i = length - 1; i >= 0; i--, counter++)
+    {
+        if (str[i] < '0' || str[i] > '9')
+            return false;
+
+        result += (str[i] - '0') * power(10, counter);
+    }
+
+    return true;
 }
 
 const char* MyString::cstr() const

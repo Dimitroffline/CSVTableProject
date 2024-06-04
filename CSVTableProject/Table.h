@@ -32,6 +32,8 @@ public:
 
     void addRow(TableRow&& row);
 
+    void removeColumn(int index);
+
     friend ostream& operator<<(ostream& os, const Table& table);
 };
 

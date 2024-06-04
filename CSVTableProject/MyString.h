@@ -4,6 +4,8 @@
 
 using namespace std;
 
+int power(int base, int pwr);
+
 class MyString {
 private:
     char* str;
@@ -37,6 +39,8 @@ public:
     const char& operator[](int index)const;
 
     bool isEmpty()const;
+
+    bool toInt(int& result)const;
 
     int size() const;
 

@@ -129,11 +129,28 @@ void Table::addRow(TableRow&& row)
     rows[size++] = std::move(row);
 }
 
+void Table::removeColumn(int index)
+{
+    if (rows == nullptr)
+        return;
+
+    int cols = rows[0].getSize();
+
+    if (index < 0 || index >= cols)
+        return;
+
+    for (int i = 0; i < size; i++)
+        rows[i].removeElement(index);
+}
+
 ostream& operator<<(ostream& os, const Table& table)
 {
     for (int i = 0; i < table.size; i++)
     {
         os << table.rows[i];
+        
+        if (i < table.size - 1)
+            os << '\n';
     }
 
     return os;

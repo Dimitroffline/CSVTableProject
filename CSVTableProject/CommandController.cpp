@@ -30,10 +30,19 @@ bool CommandController::execute(const MyString& input)
             return 0;
         }
 
+        Table temp = undoTable;
+        undoTable = table;
+
         if (!loadFromFile(command[1].cstr()))
+        {
             cout << "Error reading from file, please try again.\n";
+            undoTable = temp;
+        }
         else
+        {
             cout << "Table loaded.\n";
+            hasChanged = true;
+        }
 
         return 0;
     }
@@ -56,6 +65,7 @@ bool CommandController::execute(const MyString& input)
             else
             {
                 cout << "File saved.\n";
+                hasChanged = false;
                 return 0;
             }
         }
@@ -68,6 +78,7 @@ bool CommandController::execute(const MyString& input)
             else
             {
                 cout << "File saved.\n";
+                hasChanged = false;
             }
 
             return 0;
@@ -81,8 +92,70 @@ bool CommandController::execute(const MyString& input)
 
     if (command[0] == "exit")
     {
-        // if changed, save first
+        if (hasChanged)
+        {
+            cout << "There are unsaved changes, do you want to quit regardless?(Y/N): ";
+            char ans;
+            while(true)
+            {
+                cin >> ans;
+                if (ans == 'Y')
+                    return 1;
+                else if (ans == 'N')
+                    return 0;
+                else
+                {
+                    cout << "\nPlease enter Y or N: ";
+                }
+            }
+        }
+
         return 1;
+    }
+
+    if (command[0] == "print")
+    {
+        cout << table << '\n';
+
+        return 0;
+    }
+
+    if (command[0] == "remove")
+    {
+        if (argc != 2 && argc != 3)
+        {
+            cout << "Invalid number of arguments. Usage: remove index <index> - removes column at <index>; remove name <name> - removes column with <name>; remove dupes - removes duplicate rows.\n";
+            return 0;
+        }
+
+        if (argc == 3)
+        {
+            if (command[1] == "index")
+            {
+                int index;
+
+                if (!command[2].toInt(index))
+                {
+                    cout << "Invalid index, try again please.\n";
+                    return 0;
+                }
+                else
+                {
+                    undoTable = table;
+                    hasChanged = true;
+                    table.removeColumn(index);
+                    cout << "Column removed.\n";
+                    return 0;
+                }
+            }
+        }
+    }
+
+    if (command[0] == "undo")
+    {
+        table = undoTable;
+        cout << "Undone.\n";
+        return 0;
     }
 
     cout << "Unknown command. Please use the command \"help\" for further instructions.\n";
@@ -142,14 +215,7 @@ bool CommandController::saveToFile()
         return false;
     }
 
-    int rows = table.rowCount();
-
-    for (int i = 0; i < rows; ++i)
-    {
-        file << table[i];
-        if (i < rows - 1)
-            file << '\n';
-    }
+    file << table;
 
     file.close();
     return true;
