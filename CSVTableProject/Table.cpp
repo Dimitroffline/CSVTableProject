@@ -31,11 +31,19 @@ void Table::copy(const TableRow* rows, int size, int capacity)
 
 void Table::resize(int newCapacity)
 {
-    TableRow* newRows = new TableRow[newCapacity];
+    TableRow* newRows = new(nothrow) TableRow[newCapacity];
+
+    if (!newRows)
+    {
+        cout << "Problem with memory!\n";
+        return;
+    }
+
     for (int i = 0; i < size; ++i)
     {
         newRows[i] = move(rows[i]);
     }
+
     erase();
     rows = newRows;
     capacity = newCapacity;
@@ -110,7 +118,7 @@ int Table::rowCount() const
     return size;
 }
 
-void Table::addRow(const TableRow& row)
+void Table::addRow(const TableRow row)
 {
     if (size == capacity)
     {
@@ -126,7 +134,17 @@ void Table::addRow(TableRow&& row)
     {
         resize(capacity == 0 ? 1 : capacity * 2);
     }
+
     rows[size++] = std::move(row);
+}
+
+bool Table::copyRow(int index)
+{
+    if (index < 0 || index >= size)
+        return 0;
+
+    addRow(rows[index]);
+    return 1;
 }
 
 void Table::removeColumn(int index)
@@ -141,6 +159,92 @@ void Table::removeColumn(int index)
 
     for (int i = 0; i < size; i++)
         rows[i].removeElement(index);
+}
+
+MyString Table::findMin(int index) const
+{
+    MyString result;
+
+    if (rows == nullptr)
+        return result;
+
+    int cols = rows[0].getSize();
+
+    if (index < 0 || index >= cols)
+        return result;
+
+    result = rows[0][index];
+
+    for (int i = 1; i < size; i++)
+    {
+        if (compare(result, rows[i][index]) > 0)
+        {
+            result = rows[i][index];
+        }
+    }
+
+    return result;
+}
+
+MyString Table::findMax(int index) const
+{
+    MyString result;
+
+    if (rows == nullptr)
+        return result;
+
+    int cols = rows[0].getSize();
+
+    if (index < 0 || index >= cols)
+        return result;
+
+    result = rows[0][index];
+
+    for (int i = 1; i < size; i++)
+    {
+        if (compare(result, rows[i][index]) < 0)
+        {
+            result = rows[i][index];
+        }
+    }
+
+    return result;
+}
+
+void Table::copyMin()
+{
+    if (!rows)
+        return;
+
+    int cols = rows[0].getSize();
+
+    if (!cols)
+        return;
+
+    TableRow newRow(cols);
+
+    for (int i = 0; i < cols; i++)
+        newRow.swapElement(i, findMin(i));
+
+    addRow(newRow);
+}
+
+void Table::copyMax()
+{
+    if (!rows)
+        return;
+
+    int cols = rows[0].getSize();
+
+    if (!cols)
+        return;
+
+    TableRow newRow(cols);
+
+    for (int i = 0; i < cols; i++)
+        newRow.swapElement(i, findMax(i));
+
+    addRow(newRow);
 }
 
 ostream& operator<<(ostream& os, const Table& table)

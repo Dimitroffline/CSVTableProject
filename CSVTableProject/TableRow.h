@@ -23,6 +23,8 @@ public:
 
     TableRow& operator=(TableRow&& other) noexcept;
 
+    TableRow(int size);
+
     MyString& operator[](int index);
 
     const MyString& operator[](int index)const;
@@ -32,6 +34,8 @@ public:
     void parseFromFile(const MyString& data, int size);
 
     int getSize()const;
+
+    bool swapElement(int index, const MyString& newElement);
 
     friend ostream& operator<<(ostream& os, const TableRow& row);
 };

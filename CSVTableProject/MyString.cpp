@@ -17,6 +17,12 @@ int power(int base, int pwr)
     return result;
 }
 
+int compare(const MyString& lhs, const MyString& rhs)
+{
+    return strcmp(lhs.cstr(), rhs.cstr());
+}
+
+
 void MyString::copy(const char* str)
 {
     if (!str)

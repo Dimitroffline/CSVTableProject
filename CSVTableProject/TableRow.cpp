@@ -72,6 +72,23 @@ TableRow& TableRow::operator=(TableRow&& other) noexcept
 	return *this;
 }
 
+TableRow::TableRow(int size)
+{
+	if (!size)
+		return;
+
+	data = new(nothrow) MyString[size];
+
+	if (!data)
+	{
+		cout << "Problem with memory!\n";
+		this->size = 0;
+		return;
+	}
+
+	this->size = size;
+}
+
 MyString& TableRow::operator[](int index)
 {
 	if (index < 0 || index >= size) 
@@ -136,6 +153,15 @@ void TableRow::parseFromFile(const MyString& data, int size)
 int TableRow::getSize() const
 {
 	return size;
+}
+
+bool TableRow::swapElement(int index, const MyString& newElement)
+{
+	if (index < 0 || index >= size)
+		return 0;
+
+	data[index] = newElement;
+	return true;
 }
 
 ostream& operator<<(ostream& os, const TableRow& row)

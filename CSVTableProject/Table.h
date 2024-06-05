@@ -28,11 +28,21 @@ public:
 
     int rowCount() const;
 
-    void addRow(const TableRow& row);
+    void addRow(const TableRow row);
 
     void addRow(TableRow&& row);
 
+    bool copyRow(int index);
+
     void removeColumn(int index);
+
+    MyString findMin(int index)const;
+
+    MyString findMax(int index)const;
+
+    void copyMin();
+    
+    void copyMax();
 
     friend ostream& operator<<(ostream& os, const Table& table);
 };

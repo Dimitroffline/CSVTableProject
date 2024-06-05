@@ -6,7 +6,8 @@ using namespace std;
 
 int power(int base, int pwr);
 
-class MyString {
+class MyString 
+{
 private:
     char* str;
     int length;
@@ -52,3 +53,4 @@ public:
 
 istream& getline(istream& is, MyString& str);
 ostream& operator<<(ostream& os, const MyString& s);
+int compare(const MyString& lhs, const MyString& rhs);

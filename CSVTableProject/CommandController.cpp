@@ -153,9 +153,57 @@ bool CommandController::execute(const MyString& input)
 
     if (command[0] == "undo")
     {
+        if (!hasChanged)
+        {
+            cout << "Cannot undo when no changes were done.\n";
+            return 0;
+        }
+
         table = undoTable;
+        hasChanged = false;
         cout << "Undone.\n";
         return 0;
+    }
+
+    if (command[0] == "copy")
+    {
+        if (argc != 2)
+        {
+            cout << "Invalid number of arguments. Usage: copy <index> - copies the row with index <index> at the end of the table; copy min/max - makes a new row with min/max values for each column.\n";
+            return 0;
+        }
+
+        int index;
+
+        if (command[1].toInt(index))
+        {
+            undoTable = table;
+            hasChanged = true;
+            table.copyRow(index);
+            cout << "Row copied.\n";
+            return 0;
+        }
+        else if (command[1] == "max")
+        {
+            undoTable = table;
+            hasChanged = true;
+            table.copyMax();
+            cout << "Row with max values created.\n";
+            return 0;
+        }
+        else if (command[1] == "min")
+        {
+            undoTable = table;
+            hasChanged = true;
+            table.copyMin();
+            cout << "Row with min values created.\n";
+            return 0;
+        }
+        else
+        {
+            cout << "Invalid arguments. Usage: copy <index> - copies the row with index <index> at the end of the table; copy min/max - makes a new row with min/max values for each column.\n";
+            return 0;
+        }
     }
 
     cout << "Unknown command. Please use the command \"help\" for further instructions.\n";
