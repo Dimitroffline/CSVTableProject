@@ -288,6 +288,80 @@ void Table::copyMax()
     addRow(newRow);
 }
 
+void Table::copyFrequent()
+{
+    if (!rows)
+        return;
+
+    int cols = rows[0].getSize();
+
+    if (!cols)
+        return;
+
+    int* indexes = new(nothrow) int[cols];
+
+    if (!indexes)
+        return;
+
+    int* counts = new(nothrow) int[cols];
+
+    if (!counts)
+        return;
+
+    int* maxCounts = new(nothrow) int[cols];
+
+    if (!maxCounts)
+        return;
+
+    fill(indexes, indexes + cols, 0);
+    fill(maxCounts, maxCounts + cols, 1);
+
+    for (int i = 0; i < size - 1; i++)
+    {
+        fill(counts, counts + cols, 1);
+
+        for (int j = i + 1; j < size; j++)
+        {
+            for (int k = 0; k < cols; k++)
+            {
+                if (rows[i][k] == rows[j][k])
+                    ++counts[k];
+            }
+
+            for (int k = 0; k < cols; k++)
+            {
+                if (counts[k] > maxCounts[k])
+                {
+                    maxCounts[k] = counts[k];
+                    indexes[k] = j;
+                }
+
+                if (counts[k] == maxCounts[k])
+                {
+                    if (compare(rows[j][k], rows[indexes[k]][k]) < 0)
+                    {
+                        maxCounts[k] = counts[k];
+                        indexes[k] = j;
+                    }
+                }
+            }
+        }
+    }
+
+    TableRow newRow(cols);
+
+    for (int k = 0; k < cols; k++)
+    {
+        newRow.swapElement(k, rows[indexes[k]][k]);
+    }
+
+    addRow(newRow);
+
+    delete[] indexes;
+    delete[] counts;
+    delete[] maxCounts;
+}
+
 bool Table::swapRows(int first, int second)
 {
     if (first < 0 || first >= size)
@@ -361,10 +435,63 @@ void Table::removeDupes()
     for (int i = 0; i < size - 1; i++)
         for (int j = i + 1; j < size; j++)
             if (rows[i] == rows[j])
-            {
-                removeRow(j);
-                --j;
-            }
+                removeRow(j--);
+}
+
+void Table::sort(int index, bool order)
+{
+    int minInd;
+    int result;
+
+    for (int i = 0; i < size - 1; i++)
+    {
+        minInd = i;
+
+        for (int j = i + 1; j < size; j++)
+        {
+            result = compare(rows[j][index], rows[minInd][index]);
+            
+            if (order)
+                result = -result;
+
+            if (result < 0)
+                minInd = j;
+        }
+
+        if(minInd != i)
+            swapRows(i, minInd);
+    }
+}
+
+void Table::filter(int index, const MyString& sign, const MyString& other)
+{
+    if (!rows)
+        return;
+
+    if (index < 0 || index >= size)
+        return;
+
+    int result;
+
+    for (int i = 0; i < size; i++)
+    {
+        result = compare(rows[i][index], other);
+
+        if (result == 0 && (sign == "<=" || sign == ">=" || sign == "=="))
+        {
+            continue;
+        }
+        if (result < 0 && (sign == "<=" || sign == "<" || sign == "!="))
+        {
+            continue;
+        }
+        if (result > 0 && (sign == ">=" || sign == ">" || sign == "!="))
+        {
+            continue;
+        }
+
+        removeRow(i--);
+    }
 }
 
 ostream& operator<<(ostream& os, const Table& table)

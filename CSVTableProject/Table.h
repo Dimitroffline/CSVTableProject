@@ -46,6 +46,8 @@ public:
     
     void copyMax();
 
+    void copyFrequent();
+
     bool swapRows(int first, int second);
 
     bool swapCols(int first, int second);
@@ -53,6 +55,10 @@ public:
     bool permutate(const MyString& perm);
 
     void removeDupes();
+
+    void sort(int index, bool order);
+
+    void filter(int index, const MyString& sign, const MyString& other);
 
     friend ostream& operator<<(ostream& os, const Table& table);
 };

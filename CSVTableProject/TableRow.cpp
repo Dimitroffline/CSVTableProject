@@ -210,7 +210,7 @@ bool operator==(const TableRow& lhs, const TableRow& rhs)
 	int size = lhs.getSize();
 
 	for (int i = 0; i < size; i++)
-		if (lhs[i] != rhs[i])
+		if (!(lhs[i] == rhs[i]))
 			return false;
 
 	return true;

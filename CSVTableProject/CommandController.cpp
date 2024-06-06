@@ -148,6 +148,28 @@ bool CommandController::execute(const MyString& input)
                     return 0;
                 }
             }
+            else
+            {
+                cout << "Invalid arguments. Usage: remove index <index> - removes column at <index>; remove name <name> - removes column with <name>; remove dupes - removes duplicate rows.\n";
+                return 0;
+            }
+        }
+
+        if (argc == 2)
+        {
+            if (command[1] == "dupes")
+            {
+                undoTable = table;
+                hasChanged = true;
+                table.removeDupes();
+                cout << "Duplicates removed successfully.\n";
+                return 0;
+            }
+            else
+            {
+                cout << "Invalid arguments. Usage: remove index <index> - removes column at <index>; remove name <name> - removes column with <name>; remove dupes - removes duplicate rows.\n";
+                return 0;
+            }
         }
     }
 
@@ -168,7 +190,7 @@ bool CommandController::execute(const MyString& input)
     {
         if (argc != 2)
         {
-            cout << "Invalid number of arguments. Usage: copy <index> - copies the row with index <index> at the end of the table; copy min/max - makes a new row with min/max values for each column.\n";
+            cout << "Invalid arguments. Usage: copy <index> - copies the row with index <index> at the end of the table; copy min/max - makes a new row with min/max values for each column; copy freq - makes a new row with the most frequent values.\n";
             return 0;
         }
 
@@ -198,9 +220,17 @@ bool CommandController::execute(const MyString& input)
             cout << "Row with min values created.\n";
             return 0;
         }
+        else if (command[1] == "freq")
+        {
+            undoTable = table;
+            hasChanged = true;
+            table.copyFrequent();
+            cout << "Row with most frequent values created.\n";
+            return 0;
+        }
         else
         {
-            cout << "Invalid arguments. Usage: copy <index> - copies the row with index <index> at the end of the table; copy min/max - makes a new row with min/max values for each column.\n";
+            cout << "Invalid arguments. Usage: copy <index> - copies the row with index <index> at the end of the table; copy min/max - makes a new row with min/max values for each column; copy freq - makes a new row with the most frequent values.\n";
             return 0;
         }
     }
@@ -224,6 +254,76 @@ bool CommandController::execute(const MyString& input)
         }
 
         cout << "Permutated successfully.\n";
+        return 0;
+    }
+
+    if (command[0] == "filter")
+    {
+        if (argc != 4)
+        {
+            cout << "Invalid number of arguments. Usage: filter <index> <sign> <data> - sign can be <, >, <=, >=, ==, !=. Filters the rows which do not meet the condition.\n";
+            return 0;
+        }
+
+        int index;
+
+        if(!command[1].toInt(index))
+        { 
+            cout << "Invalid index, must be a number, please try again.\n";
+            return 0;
+        }
+
+        MyString sign = command[2];
+
+        if (!(sign == "==") && !(sign == "!=") && !(sign == "<=") && !(sign == "<") && !(sign == ">=") && !(sign == ">"))
+        {
+            cout << "Invalid sign, sign can be <, >, <=, >=, ==, !=, please try again.\n";
+            return 0;
+        }
+
+        undoTable = table;
+        hasChanged = true;
+        table.filter(index, sign, command[3]);
+        cout << "Filtered successfully.\n";
+        return 0;
+    }
+
+    if (command[0] == "sort")
+    {
+        if (argc != 3 && argc != 2)
+        {
+            cout << "Invalid number of arguments. Usage: sort <index> <order> - sorts the table based on column <index>. <order> is optional, default is ascending order, put 1 for ascending.\n";
+            return 0;
+        }
+        
+        int index;
+
+        if (!command[1].toInt(index))
+        {
+            cout << "Invalid index, must be a number, please try again.\n";
+            return 0;
+        }
+
+        int order = 0;
+
+        if (argc == 3)
+        {
+            if (!command[2].toInt(order))
+            {
+                cout << "Invalid order, must be either 0 for ascending or 1 for descending order, please try again.\n";
+                return 0;
+            }
+        }
+
+        bool ord = 0;
+
+        if (order == 1)
+            ord = 1;
+
+        undoTable = table;
+        hasChanged = true;
+        table.sort(index, ord);
+        cout << "Table sorted successfully.\n";
         return 0;
     }
 

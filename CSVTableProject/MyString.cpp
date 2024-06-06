@@ -17,6 +17,20 @@ int power(int base, int pwr)
     return result;
 }
 
+bool operator==(const MyString& lhs, const MyString& rhs)
+{
+    if (lhs.size() != rhs.size())
+        return false;
+
+    int size = lhs.size();
+
+    for (int i = 0; i < size; i++)
+        if (lhs[i] != rhs[i])
+            return false;
+
+    return true;
+}
+
 int compare(const MyString& lhs, const MyString& rhs)
 {
     return strcmp(lhs.cstr(), rhs.cstr());
@@ -80,20 +94,6 @@ MyString& MyString::operator=(const MyString& other)
     }
 
     return *this;
-}
-
-bool MyString::operator==(const MyString& other) const
-{
-    if (length != other.length)
-        return false;
-
-    for (int i = 0; i < length; ++i) 
-    {
-        if (str[i] != other.str[i])
-            return false;
-    }
-
-    return true;
 }
 
 MyString& MyString::operator=(MyString&& other) noexcept

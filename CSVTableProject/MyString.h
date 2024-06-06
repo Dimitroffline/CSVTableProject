@@ -27,8 +27,6 @@ public:
 
     MyString& operator=(MyString&& other) noexcept;
 
-    bool operator==(const MyString& other) const;
-
     MyString operator+(const MyString& other) const;
 
     MyString operator+(const char* other) const;
@@ -53,4 +51,5 @@ public:
 
 istream& getline(istream& is, MyString& str);
 ostream& operator<<(ostream& os, const MyString& s);
+bool operator==(const MyString& lhs, const MyString& rhs);
 int compare(const MyString& lhs, const MyString& rhs);

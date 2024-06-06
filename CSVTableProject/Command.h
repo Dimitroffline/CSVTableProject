@@ -3,10 +3,12 @@
 #include <iostream>
 #include <stdexcept>
 
+const int maxArguments = 10;
+
 class Command
 {
 private:
-    MyString arguments[10];
+    MyString arguments[maxArguments];
     int argCount;
 
 public:
