@@ -164,6 +164,31 @@ bool TableRow::swapElement(int index, const MyString& newElement)
 	return true;
 }
 
+bool TableRow::swap(int first, int second)
+{
+	if (first < 0 || first >= size)
+	{
+		return 0;
+	}
+
+	if (second < 0 || second >= size)
+	{
+		return 0;
+	}
+
+	if (first == second)
+	{
+		return 1;
+	}
+
+	MyString temp = data[first];
+
+	data[first] = data[second];
+	data[second] = temp;
+
+	return 1;
+}
+
 ostream& operator<<(ostream& os, const TableRow& row)
 {
 	for (int i = 0; i < row.size; i++)
@@ -175,4 +200,18 @@ ostream& operator<<(ostream& os, const TableRow& row)
 	}
 	
 	return os;
+}
+
+bool operator==(const TableRow& lhs, const TableRow& rhs)
+{
+	if (lhs.getSize() != rhs.getSize())
+		return false;
+
+	int size = lhs.getSize();
+
+	for (int i = 0; i < size; i++)
+		if (lhs[i] != rhs[i])
+			return false;
+
+	return true;
 }

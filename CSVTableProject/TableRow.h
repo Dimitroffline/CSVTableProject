@@ -37,7 +37,10 @@ public:
 
     bool swapElement(int index, const MyString& newElement);
 
+    bool swap(int first, int second);
+
     friend ostream& operator<<(ostream& os, const TableRow& row);
 };
 
 ostream& operator<<(ostream& os, const TableRow& row);
+bool operator==(const TableRow& lhs, const TableRow& rhs);

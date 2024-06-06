@@ -1,5 +1,30 @@
 #include "Table.h"
 
+bool checkPerm(const MyString& perm)
+{
+    bool isFound;
+    int permSize = perm.size();
+
+    for (int i = 1; i <= permSize; i++)
+    {
+        isFound = false;
+
+        for (int j = 0; j < permSize; j++)
+        {
+            if (perm.cstr()[j] - '0' == i)
+            {
+                isFound = true;
+                break;
+            }
+        }
+
+        if (!isFound)
+            return false;
+    }
+
+    return true;
+}
+
 void Table::erase()
 {
     delete[] rows;
@@ -147,6 +172,22 @@ bool Table::copyRow(int index)
     return 1;
 }
 
+void Table::removeRow(int index)
+{
+    if (rows == nullptr)
+        return;
+
+    if (index < 0 || index >= size)
+        return;
+
+    for (int i = index; i < size - 1; i++)
+    {
+        rows[i] = rows[i + 1];
+    }
+
+    --size;
+}
+
 void Table::removeColumn(int index)
 {
     if (rows == nullptr)
@@ -245,6 +286,85 @@ void Table::copyMax()
         newRow.swapElement(i, findMax(i));
 
     addRow(newRow);
+}
+
+bool Table::swapRows(int first, int second)
+{
+    if (first < 0 || first >= size)
+    {
+        return false;
+    }
+
+    if (second < 0 || second >= size)
+    {
+        return false;
+    }
+
+    if (first == second)
+    {
+        return true;
+    }
+
+    TableRow temp = rows[first];
+
+    rows[first] = rows[second];
+    rows[second] = temp;
+
+    return true;
+}
+
+bool Table::swapCols(int first, int second)
+{
+    for (int i = 0; i < size; i++)
+    {
+        if (!rows[i].swap(first, second))
+            return false;
+    }
+
+    return true;
+}
+
+bool Table::permutate(const MyString& perm)
+{
+    if (!rows)
+        return true;
+
+    int cols = rows[0].getSize();
+
+    if (!cols)
+        return true;
+
+    if (cols != perm.size())
+        return false;
+
+    if (!checkPerm(perm))
+        return false;
+
+    Table newTable;
+
+    TableRow newRow(cols);
+
+    for (int i = 0; i < size; i++)
+        newTable.addRow(newRow);
+
+    for (int i = 0; i < cols; i++)
+        for (int j = 0; j < size; j++)
+            newTable[j].swapElement(i, rows[j][perm.cstr()[i] - '1']);
+
+    *this = newTable;
+
+    return true;
+}
+
+void Table::removeDupes()
+{
+    for (int i = 0; i < size - 1; i++)
+        for (int j = i + 1; j < size; j++)
+            if (rows[i] == rows[j])
+            {
+                removeRow(j);
+                --j;
+            }
 }
 
 ostream& operator<<(ostream& os, const Table& table)

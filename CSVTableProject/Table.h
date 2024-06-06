@@ -34,6 +34,8 @@ public:
 
     bool copyRow(int index);
 
+    void removeRow(int index);
+
     void removeColumn(int index);
 
     MyString findMin(int index)const;
@@ -44,7 +46,17 @@ public:
     
     void copyMax();
 
+    bool swapRows(int first, int second);
+
+    bool swapCols(int first, int second);
+
+    bool permutate(const MyString& perm);
+
+    void removeDupes();
+
     friend ostream& operator<<(ostream& os, const Table& table);
 };
 
 ostream& operator<<(ostream& os, const Table& table);
+
+bool checkPerm(const MyString& perm);

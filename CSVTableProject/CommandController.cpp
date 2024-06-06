@@ -160,7 +160,6 @@ bool CommandController::execute(const MyString& input)
         }
 
         table = undoTable;
-        hasChanged = false;
         cout << "Undone.\n";
         return 0;
     }
@@ -204,6 +203,28 @@ bool CommandController::execute(const MyString& input)
             cout << "Invalid arguments. Usage: copy <index> - copies the row with index <index> at the end of the table; copy min/max - makes a new row with min/max values for each column.\n";
             return 0;
         }
+    }
+
+    if (command[0] == "permutate")
+    {
+        if (argc != 2)
+        {
+            cout << "Invalid number of arguments. Usage: permutate <string>, where string is a correct string of a new permutation, no spaces - permutates the columns in the given order.\n";
+            return 0;
+        }
+
+        Table temp = undoTable;
+        undoTable = table;
+
+        if (!table.permutate(command[1]))
+        {
+            cout << "Wrong permutation string, try again.\n";
+            undoTable = temp;
+            return 0;
+        }
+
+        cout << "Permutated successfully.\n";
+        return 0;
     }
 
     cout << "Unknown command. Please use the command \"help\" for further instructions.\n";
