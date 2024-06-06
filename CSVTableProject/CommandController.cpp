@@ -24,10 +24,30 @@ bool CommandController::execute(const MyString& input)
 
     if (command[0] == "open")
     {
-        if (argc != 2)
+        if (argc != 2 && argc != 3)
         {
-            cout << "Invalid number of arguments. Usage: open <file path>\n";
+            cout << "Invalid number of arguments. Usage: open <file path> (<names>) - loads table in <file path>, if <names> is 1, then it treats the first row as names for the columns. By default is 0.\n";
             return 0;
+        }
+
+        if (argc == 3)
+        {
+            int names;
+
+            if (!command[2].toInt(names))
+            {
+                cout << "Invalid arguments. Usage: open <file path> (<names>) - loads table in <file path>, if <names> is 1, then it treats the first row as names for the columns. By default is 0.\n";
+                return 0;
+            }
+
+            if (names != 0 && names != 1)
+            {
+                cout << "Invalid arguments. Usage: open <file path> (<names>) - loads table in <file path>, if <names> is 1, then it treats the first row as names for the columns. By default is 0.\n";
+                return 0;
+            }
+
+            if (names == 1)
+                hasNames = true;
         }
 
         Table temp = undoTable;
@@ -295,14 +315,6 @@ bool CommandController::execute(const MyString& input)
             cout << "Invalid number of arguments. Usage: sort <index> <order> - sorts the table based on column <index>. <order> is optional, default is ascending order, put 1 for ascending.\n";
             return 0;
         }
-        
-        int index;
-
-        if (!command[1].toInt(index))
-        {
-            cout << "Invalid index, must be a number, please try again.\n";
-            return 0;
-        }
 
         int order = 0;
 
@@ -319,12 +331,24 @@ bool CommandController::execute(const MyString& input)
 
         if (order == 1)
             ord = 1;
+        
+        int index;
 
         undoTable = table;
         hasChanged = true;
-        table.sort(index, ord);
-        cout << "Table sorted successfully.\n";
-        return 0;
+
+        if (!command[1].toInt(index))
+        {
+            table.sort(command[1], ord);
+            cout << "Table sorted successfully.\n";
+            return 0;
+        }
+        else
+        {
+            table.sort(index, ord);
+            cout << "Table sorted successfully.\n";
+            return 0;
+        }
     }
 
     cout << "Unknown command. Please use the command \"help\" for further instructions.\n";

@@ -202,6 +202,30 @@ void Table::removeColumn(int index)
         rows[i].removeElement(index);
 }
 
+void Table::removeColumn(const MyString& name)
+{
+    if (!rows)
+        return;
+
+    int cols = rows[0].getSize();
+
+    if (!cols)
+        return;
+
+    int index = -1;
+
+    for (int i = 0; i < cols; i++)
+    {
+        if (rows[0][i] == name)
+            index = i;
+    }
+
+    if (index == -1)
+        return;
+
+    removeColumn(index);
+}
+
 MyString Table::findMin(int index) const
 {
     MyString result;
@@ -463,6 +487,30 @@ void Table::sort(int index, bool order)
     }
 }
 
+void Table::sort(const MyString& name, bool order)
+{
+    if (!rows)
+        return;
+
+    int cols = rows[0].getSize();
+
+    if (!cols)
+        return;
+
+    int index = -1;
+
+    for (int i = 0; i < cols; i++)
+    {
+        if (rows[0][i] == name)
+            index = i;
+    }
+
+    if (index == -1)
+        return;
+
+    sort(index, order);
+}
+
 void Table::filter(int index, const MyString& sign, const MyString& other)
 {
     if (!rows)
@@ -492,6 +540,30 @@ void Table::filter(int index, const MyString& sign, const MyString& other)
 
         removeRow(i--);
     }
+}
+
+void Table::filter(const MyString& name, const MyString& sign, const MyString& other)
+{
+    if (!rows)
+        return;
+
+    int cols = rows[0].getSize();
+
+    if (!cols)
+        return;
+
+    int index = -1;
+
+    for (int i = 0; i < cols; i++)
+    {
+        if (rows[0][i] == name)
+            index = i;
+    }
+
+    if (index == -1)
+        return;
+
+    filter(index, sign, other);
 }
 
 ostream& operator<<(ostream& os, const Table& table)

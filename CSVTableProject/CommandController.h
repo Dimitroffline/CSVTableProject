@@ -11,6 +11,7 @@ private:
 	Command command;
 	MyString filePath;
 	bool hasChanged = false;
+	bool hasNames = false;
 	static CommandController* pInstance;
 
 	CommandController() {}

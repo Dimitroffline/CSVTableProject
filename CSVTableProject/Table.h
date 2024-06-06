@@ -38,6 +38,8 @@ public:
 
     void removeColumn(int index);
 
+    void removeColumn(const MyString& name);
+
     MyString findMin(int index)const;
 
     MyString findMax(int index)const;
@@ -58,7 +60,11 @@ public:
 
     void sort(int index, bool order);
 
+    void sort(const MyString& name, bool order);
+
     void filter(int index, const MyString& sign, const MyString& other);
+
+    void filter(const MyString& name, const MyString& sign, const MyString& other);
 
     friend ostream& operator<<(ostream& os, const Table& table);
 };
