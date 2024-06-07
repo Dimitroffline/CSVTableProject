@@ -62,6 +62,17 @@ bool CommandController::execute(const MyString& input)
         {
             cout << "Table loaded.\n";
             hasChanged = true;
+
+            if (hasNames)
+            {
+                if (!table.rowCount())
+                {
+                    cout << "Could not load names.\n";
+                    return 0;
+                }
+
+                table.addNames();
+            }
         }
 
         return 0;
@@ -167,6 +178,14 @@ bool CommandController::execute(const MyString& input)
                     cout << "Column removed.\n";
                     return 0;
                 }
+            }
+            else if (command[1] == "name")
+            {
+                undoTable = table;
+                hasChanged = true;
+                table.removeColumn(command[2]);
+                cout << "Column removed.\n";
+                return 0;
             }
             else
             {
@@ -285,14 +304,6 @@ bool CommandController::execute(const MyString& input)
             return 0;
         }
 
-        int index;
-
-        if(!command[1].toInt(index))
-        { 
-            cout << "Invalid index, must be a number, please try again.\n";
-            return 0;
-        }
-
         MyString sign = command[2];
 
         if (!(sign == "==") && !(sign == "!=") && !(sign == "<=") && !(sign == "<") && !(sign == ">=") && !(sign == ">"))
@@ -301,11 +312,23 @@ bool CommandController::execute(const MyString& input)
             return 0;
         }
 
+        int index;
+
         undoTable = table;
         hasChanged = true;
-        table.filter(index, sign, command[3]);
-        cout << "Filtered successfully.\n";
-        return 0;
+
+        if(!command[1].toInt(index))
+        { 
+            table.filter(command[1], sign, command[3]);
+            cout << "Filtered successfully.\n";
+            return 0;
+        }
+        else
+        {
+            table.filter(index, sign, command[3]);
+            cout << "Filtered successfully.\n";
+            return 0;
+        }
     }
 
     if (command[0] == "sort")

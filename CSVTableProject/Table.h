@@ -4,12 +4,13 @@
 class Table
 {
 private:
+    TableRow names;
     TableRow* rows;
     int size;
     int capacity;
 
     void erase();
-    void copy(const TableRow* rows, int size, int capacity);
+    void copy(const TableRow* rows, int size, int capacity, const TableRow& names);
     void resize(int newCapacity);
 
 public:
@@ -18,7 +19,7 @@ public:
     Table& operator=(const Table& other);
     ~Table();
 
-    Table(const TableRow* rows, int size);
+    Table(const TableRow* rows, int size, const TableRow& names);
 
     Table(Table&& other) noexcept;
 
@@ -65,6 +66,8 @@ public:
     void filter(int index, const MyString& sign, const MyString& other);
 
     void filter(const MyString& name, const MyString& sign, const MyString& other);
+
+    void addNames();
 
     friend ostream& operator<<(ostream& os, const Table& table);
 };

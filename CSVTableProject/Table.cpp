@@ -30,7 +30,7 @@ void Table::erase()
     delete[] rows;
 }
 
-void Table::copy(const TableRow* rows, int size, int capacity)
+void Table::copy(const TableRow* rows, int size, int capacity, const TableRow& names)
 {
     this->size = size;
     this->capacity = capacity;
@@ -52,6 +52,8 @@ void Table::copy(const TableRow* rows, int size, int capacity)
 
     for (int i = 0; i < size; i++)
         this->rows[i] = rows[i];
+
+    this->names = names;
 }
 
 void Table::resize(int newCapacity)
@@ -77,18 +79,20 @@ void Table::resize(int newCapacity)
 Table::Table()
 {
     rows = nullptr;
+    names.reset();
     size = 0;
     capacity = 0;
 }
 
 Table::Table(const Table& other)
 {
-    copy(other.rows, other.size, other.capacity);
+    copy(other.rows, other.size, other.capacity, other.names);
 }
 
-Table::Table(Table&& other) noexcept : rows(other.rows), size(other.size), capacity(other.capacity)
+Table::Table(Table&& other) noexcept : rows(other.rows), size(other.size), capacity(other.capacity), names(other.names)
 {
     other.rows = nullptr;
+    names.reset();
     other.size = 0;
     other.capacity = 0;
 }
@@ -98,7 +102,7 @@ Table& Table::operator=(const Table& other)
     if (this != &other)
     {
         erase();
-        copy(other.rows, other.size, other.capacity);
+        copy(other.rows, other.size, other.capacity, other.names);
     }
 
     return *this;
@@ -113,6 +117,7 @@ Table& Table::operator=(Table&& other) noexcept
         size = other.size;
         capacity = other.capacity;
         other.rows = nullptr;
+        other.names.reset();
         other.size = 0;
         other.capacity = 0;
     }
@@ -125,9 +130,9 @@ Table::~Table()
     erase();
 }
 
-Table::Table(const TableRow* rows, int size)
+Table::Table(const TableRow* rows, int size, const TableRow& names)
 {
-    copy(rows, size, size);
+    copy(rows, size, size, names);
 }
 
 TableRow& Table::operator[](int index)
@@ -200,23 +205,22 @@ void Table::removeColumn(int index)
 
     for (int i = 0; i < size; i++)
         rows[i].removeElement(index);
+
+    names.removeElement(index);
 }
 
 void Table::removeColumn(const MyString& name)
 {
-    if (!rows)
+    if (names.isEmpty())
         return;
 
-    int cols = rows[0].getSize();
-
-    if (!cols)
-        return;
+    int cols = names.getSize();
 
     int index = -1;
 
     for (int i = 0; i < cols; i++)
     {
-        if (rows[0][i] == name)
+        if (names[i] == name)
             index = i;
     }
 
@@ -419,6 +423,8 @@ bool Table::swapCols(int first, int second)
             return false;
     }
 
+    names.swap(first, second);
+
     return true;
 }
 
@@ -441,13 +447,19 @@ bool Table::permutate(const MyString& perm)
     Table newTable;
 
     TableRow newRow(cols);
+    TableRow newNames(cols);
 
     for (int i = 0; i < size; i++)
         newTable.addRow(newRow);
 
     for (int i = 0; i < cols; i++)
+    {
         for (int j = 0; j < size; j++)
             newTable[j].swapElement(i, rows[j][perm.cstr()[i] - '1']);
+
+        if(!names.isEmpty())
+            newNames.swapElement(i, names[perm.cstr()[i] - '1']);
+    }
 
     *this = newTable;
 
@@ -489,19 +501,16 @@ void Table::sort(int index, bool order)
 
 void Table::sort(const MyString& name, bool order)
 {
-    if (!rows)
+    if (names.isEmpty())
         return;
 
-    int cols = rows[0].getSize();
-
-    if (!cols)
-        return;
+    int cols = names.getSize();
 
     int index = -1;
 
     for (int i = 0; i < cols; i++)
     {
-        if (rows[0][i] == name)
+        if (names[i] == name)
             index = i;
     }
 
@@ -516,7 +525,9 @@ void Table::filter(int index, const MyString& sign, const MyString& other)
     if (!rows)
         return;
 
-    if (index < 0 || index >= size)
+    int cols = rows[0].getSize();
+
+    if (index < 0 || index >= cols)
         return;
 
     int result;
@@ -544,19 +555,16 @@ void Table::filter(int index, const MyString& sign, const MyString& other)
 
 void Table::filter(const MyString& name, const MyString& sign, const MyString& other)
 {
-    if (!rows)
+    if (names.isEmpty())
         return;
 
-    int cols = rows[0].getSize();
-
-    if (!cols)
-        return;
+    int cols = names.getSize();
 
     int index = -1;
 
     for (int i = 0; i < cols; i++)
     {
-        if (rows[0][i] == name)
+        if (names[i] == name)
             index = i;
     }
 
@@ -566,8 +574,24 @@ void Table::filter(const MyString& name, const MyString& sign, const MyString& o
     filter(index, sign, other);
 }
 
+void Table::addNames()
+{
+    if (!names.isEmpty())
+        return;
+
+    if (!rows)
+        return;
+
+    names = rows[0];
+
+    removeRow(0);
+}
+
 ostream& operator<<(ostream& os, const Table& table)
 {
+    if(!table.names.isEmpty())
+        os << table.names << '\n';
+
     for (int i = 0; i < table.size; i++)
     {
         os << table.rows[i];

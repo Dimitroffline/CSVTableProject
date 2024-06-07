@@ -189,6 +189,17 @@ bool TableRow::swap(int first, int second)
 	return 1;
 }
 
+void TableRow::reset()
+{
+	data = nullptr;
+	size = 0;
+}
+
+bool TableRow::isEmpty() const
+{
+	return (size == 0);
+}
+
 ostream& operator<<(ostream& os, const TableRow& row)
 {
 	for (int i = 0; i < row.size; i++)

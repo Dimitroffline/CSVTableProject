@@ -39,6 +39,10 @@ public:
 
     bool swap(int first, int second);
 
+    void reset();
+
+    bool isEmpty()const;
+
     friend ostream& operator<<(ostream& os, const TableRow& row);
 };
 
