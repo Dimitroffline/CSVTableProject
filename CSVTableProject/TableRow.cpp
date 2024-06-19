@@ -18,6 +18,7 @@ void TableRow::copy(const MyString* data, int size)
 void TableRow::erase()
 {
 	delete[] data;
+	size = 0;
 }
 
 TableRow::TableRow()

@@ -61,7 +61,6 @@ bool CommandController::execute(const MyString& input)
         else
         {
             cout << "Table loaded.\n";
-            hasChanged = true;
 
             if (hasNames)
             {
@@ -181,6 +180,12 @@ bool CommandController::execute(const MyString& input)
             }
             else if (command[1] == "name")
             {
+                if(!hasNames)
+                {
+                    cout << "Table has no names.\n";
+                    return 0;
+                }
+
                 undoTable = table;
                 hasChanged = true;
                 table.removeColumn(command[2]);
@@ -282,16 +287,24 @@ bool CommandController::execute(const MyString& input)
             return 0;
         }
 
-        Table temp = undoTable;
+        Table temp;
+
+        if (hasChanged)
+            temp = undoTable;
+
         undoTable = table;
 
         if (!table.permutate(command[1]))
         {
             cout << "Wrong permutation string, try again.\n";
-            undoTable = temp;
+
+            if(hasChanged)
+                undoTable = temp;
+
             return 0;
         }
 
+        hasChanged = true;
         cout << "Permutated successfully.\n";
         return 0;
     }
@@ -314,18 +327,28 @@ bool CommandController::execute(const MyString& input)
 
         int index;
 
-        undoTable = table;
-        hasChanged = true;
 
         if(!command[1].toInt(index))
         { 
+            if (!hasNames)
+            {
+                cout << "Table has no names.\n";
+                return 0;
+            }
+
             table.filter(command[1], sign, command[3]);
+
+            undoTable = table;
+            hasChanged = true;
             cout << "Filtered successfully.\n";
             return 0;
         }
         else
         {
             table.filter(index, sign, command[3]);
+
+            undoTable = table;
+            hasChanged = true;
             cout << "Filtered successfully.\n";
             return 0;
         }
@@ -357,21 +380,49 @@ bool CommandController::execute(const MyString& input)
         
         int index;
 
-        undoTable = table;
-        hasChanged = true;
-
         if (!command[1].toInt(index))
         {
+            if (!hasNames)
+            {
+                cout << "Table has no names.\n";
+                return 0;
+            }
+
             table.sort(command[1], ord);
+
+            undoTable = table;
+            hasChanged = true;
             cout << "Table sorted successfully.\n";
             return 0;
         }
         else
         {
             table.sort(index, ord);
+
+            undoTable = table;
+            hasChanged = true;
             cout << "Table sorted successfully.\n";
             return 0;
         }
+    }
+
+    if (command[0] == "help")
+    {
+        cout << "================================================================================================\n";
+        cout << "\nAvailable functionalities:\n";
+        cout << "Command Open: \nopen <file path> (<names>) - loads table in <file path>.\n<names> is optional, by default its false, put 0 for false or 1 for true. When true, treats the first row as names for the columns.\n\n";
+        cout << "Command Save: \nsave - saves to the current file; \nsave <file path> - saves to the given path.\n\n";
+        cout << "Command Exit: \nexit - exits the program.\n\n";
+        cout << "Command Print: \nprint - prints the currently open table.\n\n";
+        cout << "Command Remove: \nremove dupes - removes all duplicate rows; \nremove index <index> - removes the column on the given index; \nremove name <name> - removes the column with the given name.\n\n";
+        cout << "Command Copy: \ncopy <index> - copies the row with the given index; \ncopy min/max - creates a new row with min/max value in each column; \ncopy freq - creates a new row with the most frequent data for each column.\n\n";
+        cout << "Command Permutate: \npermutate <string> - permutates the columns in the given order. \nExample: \n>permutate 132 - changes the order of the second and third columns.\n\n";
+        cout << "Command Filter: \nfilter <index> <sign> <data> - filters the rows which do not meet the condition in the given index column;\nfilter <name> <sign> <data> - filters the rows which do not meet the condition in the given name column.\nSign can be <, >, <=, >=, ==, !=.\n\n";
+        cout << "Command Sort: \nsort <index> (<order>) - sorts the table based on column at given index;\nsort <name> (<order>) - sorts the table based on column with given name.\n<order> is optional, default is ascending order, put 0 for ascending or 1 for descending.\n\n";
+        cout << "Command Undo: \nundo - undoes the last command.\n\n";
+        cout << "================================================================================================\n";
+
+        return 0;
     }
 
     cout << "Unknown command. Please use the command \"help\" for further instructions.\n";
@@ -390,12 +441,12 @@ bool CommandController::loadFromFile(const char* filePath)
 
     if (!file.is_open())
     {
-        throw runtime_error("Could not open file.");
         return false;
     }
 
     MyString line;
     int size = 0;
+    table.~Table();
     
     while (getline(file, line))
     {

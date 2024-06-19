@@ -28,6 +28,9 @@ bool checkPerm(const MyString& perm)
 void Table::erase()
 {
     delete[] rows;
+    size = 0;
+    capacity = 0;
+    names.reset();
 }
 
 void Table::copy(const TableRow* rows, int size, int capacity, const TableRow& names)
@@ -71,7 +74,9 @@ void Table::resize(int newCapacity)
         newRows[i] = move(rows[i]);
     }
 
+    int oldSize = size;
     erase();
+    size = oldSize;
     rows = newRows;
     capacity = newCapacity;
 }
@@ -116,6 +121,7 @@ Table& Table::operator=(Table&& other) noexcept
         rows = other.rows;
         size = other.size;
         capacity = other.capacity;
+        names = other.names;
         other.rows = nullptr;
         other.names.reset();
         other.size = 0;
@@ -585,6 +591,11 @@ void Table::addNames()
     names = rows[0];
 
     removeRow(0);
+}
+
+bool Table::isEmpty() const
+{
+    return size == 0;
 }
 
 ostream& operator<<(ostream& os, const Table& table)

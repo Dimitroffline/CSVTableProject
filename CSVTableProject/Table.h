@@ -69,6 +69,8 @@ public:
 
     void addNames();
 
+    bool isEmpty()const;
+
     friend ostream& operator<<(ostream& os, const Table& table);
 };
 
