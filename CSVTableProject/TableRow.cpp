@@ -1,106 +1,22 @@
 #include "TableRow.h"
 
-void TableRow::copy(const MyString* data, int size)
+
+TableRow::TableRow(vector<string> data)
 {
-	this->size = size;
-	this->data = new(nothrow) MyString[size];
-
-	if (!this->data)
-	{
-		cout << "Problem with memory!\n";
-		return;
-	}
-
-	for (int i = 0; i < size; i++)
-		this->data[i] = data[i];
+	this->data = data;
 }
 
-void TableRow::erase()
+string TableRow::operator[](int index)
 {
-	delete[] data;
-	size = 0;
-}
-
-TableRow::TableRow()
-{
-	data = nullptr;
-	size = 0;
-}
-
-TableRow::TableRow(const TableRow& other)
-{
-	copy(other.data, other.size);
-}
-
-TableRow& TableRow::operator=(const TableRow& other)
-{
-	if (this != &other)
-	{
-		erase();
-		copy(other.data, other.size);
-	}
-
-	return *this;
-}
-
-TableRow::~TableRow()
-{
-	erase();
-}
-
-TableRow::TableRow(const MyString* data, int size)
-{
-	copy(data, size);
-}
-
-TableRow::TableRow(TableRow&& other) noexcept : size(other.size), data(other.data)
-{
-	other.size = 0;
-	other.data = nullptr;
-}
-
-TableRow& TableRow::operator=(TableRow&& other) noexcept
-{
-	if (this != &other)
-	{
-		erase();
-		size = other.size;
-		data = other.data;
-		other.size = 0;
-		other.data = nullptr;
-	}
-
-	return *this;
-}
-
-TableRow::TableRow(int size)
-{
-	if (!size)
-		return;
-
-	data = new(nothrow) MyString[size];
-
-	if (!data)
-	{
-		cout << "Problem with memory!\n";
-		this->size = 0;
-		return;
-	}
-
-	this->size = size;
-}
-
-MyString& TableRow::operator[](int index)
-{
-	if (index < 0 || index >= size) 
+	if (index < 0 || index >= getSize()) 
 		throw out_of_range("Index out of range");
 
 	return data[index];
 }
 
-const MyString& TableRow::operator[](int index) const
+const string TableRow::operator[](int index) const
 {
-	if (index < 0 || index >= size)
+	if (index < 0 || index >= getSize())
 		throw out_of_range("Index out of range");
 
 	return data[index];
@@ -108,71 +24,63 @@ const MyString& TableRow::operator[](int index) const
 
 void TableRow::removeElement(int index)
 {
+	int size = getSize();
 	if (index < 0 || index >= size)
 		return;
 
 	for (int i = index; i < size - 1; i++)
 		data[i] = data[i + 1];
 
-	--size;
+	data.pop_back();
 }
 
-void TableRow::parseFromFile(const MyString& data, int size)
+void TableRow::parseFromFile(string data)
 {
-	erase();
-
-	this->data = new(nothrow) MyString[size];
-
-	if (!this->data)
-	{
-		cout << "Trouble with memory.\n";
-		this->size = 0;
-		return;
-	}
-
-	this->size = size;
-
 	int len = data.size();
-	int ind = 0;
-	MyString buff("");
+	string buff;
 
 	for (int i = 0; i < len; i++)
 	{
-		if (data[i] == ' ' && !buff.isEmpty())
+		if (data[i] == ' ' && !buff.empty())
 		{
-			this->data[ind++] = buff;
-			buff = "";
+			this->data.push_back(buff);
+			buff.clear();
 		}
 		else
 			buff = buff + data[i];
 	}
 
-	if (!buff.isEmpty())
-		this->data[ind] = buff;
+	if (!buff.empty())
+		this->data.push_back(buff);
 }
 
 int TableRow::getSize() const
 {
-	return size;
+	return data.size();
 }
 
-bool TableRow::swapElement(int index, const MyString& newElement)
+bool TableRow::swapElement(int index, string newElement)
 {
-	if (index < 0 || index >= size)
+	if (index < 0 || index >= getSize())
 		return 0;
 
 	data[index] = newElement;
 	return true;
 }
 
+void TableRow::addElement(string newElement)
+{
+	data.push_back(newElement);
+}
+
 bool TableRow::swap(int first, int second)
 {
-	if (first < 0 || first >= size)
+	if (first < 0 || first >= getSize())
 	{
 		return 0;
 	}
 
-	if (second < 0 || second >= size)
+	if (second < 0 || second >= getSize())
 	{
 		return 0;
 	}
@@ -182,7 +90,7 @@ bool TableRow::swap(int first, int second)
 		return 1;
 	}
 
-	MyString temp = data[first];
+	string temp = data[first];
 
 	data[first] = data[second];
 	data[second] = temp;
@@ -192,22 +100,23 @@ bool TableRow::swap(int first, int second)
 
 void TableRow::reset()
 {
-	data = nullptr;
-	size = 0;
+	data.clear();
 }
 
 bool TableRow::isEmpty() const
 {
-	return (size == 0);
+	return data.empty();
 }
 
 ostream& operator<<(ostream& os, const TableRow& row)
 {
-	for (int i = 0; i < row.size; i++)
+	int size = row.getSize();
+
+	for (int i = 0; i < size; i++)
 	{
 		os << row.data[i];
 
-		if (i < row.size - 1)
+		if (i < size - 1)
 			os << ' ';
 	}
 	
@@ -216,14 +125,5 @@ ostream& operator<<(ostream& os, const TableRow& row)
 
 bool operator==(const TableRow& lhs, const TableRow& rhs)
 {
-	if (lhs.getSize() != rhs.getSize())
-		return false;
-
-	int size = lhs.getSize();
-
-	for (int i = 0; i < size; i++)
-		if (!(lhs[i] == rhs[i]))
-			return false;
-
-	return true;
+	return lhs.data == rhs.data;
 }

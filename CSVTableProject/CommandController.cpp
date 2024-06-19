@@ -10,7 +10,7 @@ CommandController* CommandController::Instance()
     return pInstance;
 }
 
-bool CommandController::execute(const MyString& input)
+bool CommandController::execute(string input)
 {
     command.parse(input);
 
@@ -34,7 +34,11 @@ bool CommandController::execute(const MyString& input)
         {
             int names;
 
-            if (!command[2].toInt(names))
+            try
+            {
+                names = stoi(command[2]);
+            }
+            catch (const invalid_argument& e)
             {
                 cout << "Invalid arguments. Usage: open <file path> (<names>) - loads table in <file path>, if <names> is 1, then it treats the first row as names for the columns. By default is 0.\n";
                 return 0;
@@ -53,7 +57,7 @@ bool CommandController::execute(const MyString& input)
         Table temp = undoTable;
         undoTable = table;
 
-        if (!loadFromFile(command[1].cstr()))
+        if (!loadFromFile(command[1].c_str()))
         {
             cout << "Error reading from file, please try again.\n";
             undoTable = temp;
@@ -64,7 +68,7 @@ bool CommandController::execute(const MyString& input)
 
             if (hasNames)
             {
-                if (!table.rowCount())
+                if (!table.getSize())
                 {
                     cout << "Could not load names.\n";
                     return 0;
@@ -101,7 +105,7 @@ bool CommandController::execute(const MyString& input)
         }
         else if (argc == 2)
         {
-            if (!saveToFile(command[1].cstr()))
+            if (!saveToFile(command[1].c_str()))
             {
                 cout << "Could not save to new path, please try again.\n";
             }
@@ -164,19 +168,22 @@ bool CommandController::execute(const MyString& input)
             {
                 int index;
 
-                if (!command[2].toInt(index))
+                try
+                {
+                    index = stoi(command[2]);
+                }
+                catch(const invalid_argument& e)
                 {
                     cout << "Invalid index, try again please.\n";
                     return 0;
                 }
-                else
-                {
-                    undoTable = table;
-                    hasChanged = true;
-                    table.removeColumn(index);
-                    cout << "Column removed.\n";
-                    return 0;
-                }
+
+                undoTable = table;
+                hasChanged = true;
+                table.removeColumn(index);
+                cout << "Column removed.\n";
+                return 0;
+
             }
             else if (command[1] == "name")
             {
@@ -240,42 +247,46 @@ bool CommandController::execute(const MyString& input)
 
         int index;
 
-        if (command[1].toInt(index))
+        try
         {
+            index = stoi(command[1]);
             undoTable = table;
             hasChanged = true;
             table.copyRow(index);
             cout << "Row copied.\n";
             return 0;
         }
-        else if (command[1] == "max")
+        catch (const invalid_argument& e)
         {
-            undoTable = table;
-            hasChanged = true;
-            table.copyMax();
-            cout << "Row with max values created.\n";
-            return 0;
-        }
-        else if (command[1] == "min")
-        {
-            undoTable = table;
-            hasChanged = true;
-            table.copyMin();
-            cout << "Row with min values created.\n";
-            return 0;
-        }
-        else if (command[1] == "freq")
-        {
-            undoTable = table;
-            hasChanged = true;
-            table.copyFrequent();
-            cout << "Row with most frequent values created.\n";
-            return 0;
-        }
-        else
-        {
-            cout << "Invalid arguments. Usage: copy <index> - copies the row with index <index> at the end of the table; copy min/max - makes a new row with min/max values for each column; copy freq - makes a new row with the most frequent values.\n";
-            return 0;
+            if (command[1] == "max")
+            {
+                undoTable = table;
+                hasChanged = true;
+                table.copyMax();
+                cout << "Row with max values created.\n";
+                return 0;
+            }
+            else if (command[1] == "min")
+            {
+                undoTable = table;
+                hasChanged = true;
+                table.copyMin();
+                cout << "Row with min values created.\n";
+                return 0;
+            }
+            else if (command[1] == "freq")
+            {
+                undoTable = table;
+                hasChanged = true;
+                table.copyFrequent();
+                cout << "Row with most frequent values created.\n";
+                return 0;
+            }
+            else
+            {
+                cout << "Invalid arguments. Usage: copy <index> - copies the row with index <index> at the end of the table; copy min/max - makes a new row with min/max values for each column; copy freq - makes a new row with the most frequent values.\n";
+                return 0;
+            }
         }
     }
 
@@ -289,8 +300,7 @@ bool CommandController::execute(const MyString& input)
 
         Table temp;
 
-        if (hasChanged)
-            temp = undoTable;
+        temp = undoTable;
 
         undoTable = table;
 
@@ -298,8 +308,7 @@ bool CommandController::execute(const MyString& input)
         {
             cout << "Wrong permutation string, try again.\n";
 
-            if(hasChanged)
-                undoTable = temp;
+            undoTable = temp;
 
             return 0;
         }
@@ -317,7 +326,7 @@ bool CommandController::execute(const MyString& input)
             return 0;
         }
 
-        MyString sign = command[2];
+        string sign = command[2];
 
         if (!(sign == "==") && !(sign == "!=") && !(sign == "<=") && !(sign == "<") && !(sign == ">=") && !(sign == ">"))
         {
@@ -327,9 +336,18 @@ bool CommandController::execute(const MyString& input)
 
         int index;
 
+        try
+        {
+            index = stoi(command[1]);
+            table.filter(index, sign, command[3]);
 
-        if(!command[1].toInt(index))
-        { 
+            undoTable = table;
+            hasChanged = true;
+            cout << "Filtered successfully.\n";
+            return 0;
+        }
+        catch (const invalid_argument& e)
+        {
             if (!hasNames)
             {
                 cout << "Table has no names.\n";
@@ -337,15 +355,6 @@ bool CommandController::execute(const MyString& input)
             }
 
             table.filter(command[1], sign, command[3]);
-
-            undoTable = table;
-            hasChanged = true;
-            cout << "Filtered successfully.\n";
-            return 0;
-        }
-        else
-        {
-            table.filter(index, sign, command[3]);
 
             undoTable = table;
             hasChanged = true;
@@ -366,11 +375,22 @@ bool CommandController::execute(const MyString& input)
 
         if (argc == 3)
         {
-            if (!command[2].toInt(order))
+            try
+            {
+                order = stoi(command[2]);
+            }
+            catch(const invalid_argument& e)
             {
                 cout << "Invalid order, must be either 0 for ascending or 1 for descending order, please try again.\n";
                 return 0;
             }
+        }
+
+
+        if (order != 0 && order != 1)
+        {
+            cout << "Invalid order, must be either 0 for ascending or 1 for descending order, please try again.\n";
+            return 0;
         }
 
         bool ord = 0;
@@ -380,7 +400,17 @@ bool CommandController::execute(const MyString& input)
         
         int index;
 
-        if (!command[1].toInt(index))
+        try 
+        {
+            index = stoi(command[1]);
+            table.sort(index, ord);
+
+            undoTable = table;
+            hasChanged = true;
+            cout << "Table sorted successfully.\n";
+            return 0;
+        }
+        catch (const invalid_argument& e)
         {
             if (!hasNames)
             {
@@ -389,15 +419,6 @@ bool CommandController::execute(const MyString& input)
             }
 
             table.sort(command[1], ord);
-
-            undoTable = table;
-            hasChanged = true;
-            cout << "Table sorted successfully.\n";
-            return 0;
-        }
-        else
-        {
-            table.sort(index, ord);
 
             undoTable = table;
             hasChanged = true;
@@ -444,7 +465,7 @@ bool CommandController::loadFromFile(const char* filePath)
         return false;
     }
 
-    MyString line;
+    string line;
     int size = 0;
     table.~Table();
     
@@ -462,7 +483,7 @@ bool CommandController::loadFromFile(const char* filePath)
         }
 
         TableRow row;
-        row.parseFromFile(line, size);
+        row.parseFromFile(line);
         table.addRow(row);
     }
 
@@ -474,7 +495,7 @@ bool CommandController::loadFromFile(const char* filePath)
 
 bool CommandController::saveToFile()
 {
-    ofstream file(filePath.cstr());
+    ofstream file(filePath.c_str());
 
     if (!file.is_open())
     {
@@ -490,7 +511,7 @@ bool CommandController::saveToFile()
 
 bool CommandController::saveToFile(const char* filePath)
 {
-    MyString temp = this->filePath;
+    string temp = this->filePath;
     this->filePath = filePath;
 
     if (!saveToFile())

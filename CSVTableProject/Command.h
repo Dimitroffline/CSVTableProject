@@ -1,22 +1,24 @@
-#include "MyString.h"
+#include <string>
 #include <cstring>
 #include <iostream>
 #include <stdexcept>
+
+using namespace std;
 
 const int maxArguments = 10;
 
 class Command
 {
 private:
-    MyString arguments[maxArguments];
+    string arguments[maxArguments];
     int argCount;
 
 public:
     Command();
 
-    void parse(const MyString& input);
+    void parse(string input);
 
     int getArgCount() const;
 
-    MyString& operator[](int index);
+    string& operator[](int index);
 };

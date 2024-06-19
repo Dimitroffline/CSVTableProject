@@ -1,7 +1,10 @@
 #pragma once
 #include "Command.h"
 #include "Table.h"
-#include "fstream"
+#include <fstream>
+#include <string>
+
+using namespace std;
 
 class CommandController
 {
@@ -9,7 +12,7 @@ private:
 	Table table;
 	Table undoTable;
 	Command command;
-	MyString filePath;
+	string filePath;
 	bool hasChanged = false;
 	bool hasNames = false;
 	static CommandController* pInstance;
@@ -26,7 +29,7 @@ public:
 
 	static CommandController* Instance();
 
-	bool execute(const MyString& input);
+	bool execute(string input);
 	
 	static void Release();
 };

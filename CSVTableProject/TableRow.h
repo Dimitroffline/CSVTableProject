@@ -1,41 +1,33 @@
 #pragma once
-#include "MyString.h"
+#include <string>
+#include <vector>
+#include <iostream>
+using namespace std;
 
 class TableRow
 {
 private:
-    MyString* data;
-    int size;
-
-    void copy(const MyString* data, int size);
-    void erase();
+    vector<string> data;
 
 public:
 
-    TableRow();
-    TableRow(const TableRow& other);
-    TableRow& operator=(const TableRow& other);
-    ~TableRow();
+    TableRow() = default;
 
-    TableRow(const MyString* data, int size);
+    TableRow(vector<string> data);
 
-    TableRow(TableRow&& other) noexcept;
+    string operator[](int index);
 
-    TableRow& operator=(TableRow&& other) noexcept;
-
-    TableRow(int size);
-
-    MyString& operator[](int index);
-
-    const MyString& operator[](int index)const;
+    const string operator[](int index)const;
 
     void removeElement(int index);
 
-    void parseFromFile(const MyString& data, int size);
+    void parseFromFile(string data);
 
     int getSize()const;
 
-    bool swapElement(int index, const MyString& newElement);
+    bool swapElement(int index, string newElement);
+
+    void addElement(string newElement);
 
     bool swap(int first, int second);
 
@@ -44,6 +36,7 @@ public:
     bool isEmpty()const;
 
     friend ostream& operator<<(ostream& os, const TableRow& row);
+    friend bool operator==(const TableRow& lhs, const TableRow& rhs);
 };
 
 ostream& operator<<(ostream& os, const TableRow& row);

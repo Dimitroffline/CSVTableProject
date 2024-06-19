@@ -5,33 +5,19 @@ class Table
 {
 private:
     TableRow names;
-    TableRow* rows;
-    int size;
-    int capacity;
-
-    void erase();
-    void copy(const TableRow* rows, int size, int capacity, const TableRow& names);
-    void resize(int newCapacity);
+    vector<TableRow> rows;
 
 public:
-    Table();
-    Table(const Table& other);
-    Table& operator=(const Table& other);
-    ~Table();
+    
+    Table() = default;
 
-    Table(const TableRow* rows, int size, const TableRow& names);
+    Table(vector<TableRow> rows, const TableRow& names);
 
-    Table(Table&& other) noexcept;
+    TableRow operator[](int index);
 
-    Table& operator=(Table&& other) noexcept;
+    int getSize() const;
 
-    TableRow& operator[](int index);
-
-    int rowCount() const;
-
-    void addRow(const TableRow row);
-
-    void addRow(TableRow&& row);
+    void addRow(TableRow row);
 
     bool copyRow(int index);
 
@@ -39,11 +25,11 @@ public:
 
     void removeColumn(int index);
 
-    void removeColumn(const MyString& name);
+    void removeColumn(string name);
 
-    MyString findMin(int index)const;
+    string findMin(int index)const;
 
-    MyString findMax(int index)const;
+    string findMax(int index)const;
 
     void copyMin();
     
@@ -55,17 +41,17 @@ public:
 
     bool swapCols(int first, int second);
 
-    bool permutate(const MyString& perm);
+    bool permutate(string perm);
 
     void removeDupes();
 
     void sort(int index, bool order);
 
-    void sort(const MyString& name, bool order);
+    void sort(string name, bool order);
 
-    void filter(int index, const MyString& sign, const MyString& other);
+    void filter(int index, string sign, string other);
 
-    void filter(const MyString& name, const MyString& sign, const MyString& other);
+    void filter(string name, string sign, string other);
 
     void addNames();
 
@@ -76,4 +62,4 @@ public:
 
 ostream& operator<<(ostream& os, const Table& table);
 
-bool checkPerm(const MyString& perm);
+bool checkPerm(string perm);

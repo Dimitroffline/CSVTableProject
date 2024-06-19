@@ -2,7 +2,7 @@
 
 int main()
 {
-	MyString line;
+	string line;
 
 	cout << ">";
 
