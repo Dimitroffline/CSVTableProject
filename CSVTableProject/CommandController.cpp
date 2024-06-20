@@ -156,7 +156,7 @@ bool CommandController::execute(string input)
 
     if (command[0] == "print")
     {
-        cout << table << '\n';
+        cout << '\n' << table << "\n\n";
 
         return 0;
     }

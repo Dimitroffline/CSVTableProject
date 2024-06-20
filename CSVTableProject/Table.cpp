@@ -461,6 +461,9 @@ void Table::addNames()
     if (!names.isEmpty())
         return;
 
+    if (isEmpty())
+        return;
+
     names = rows[0];
 
     removeRow(0);
