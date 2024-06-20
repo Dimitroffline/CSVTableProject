@@ -3,10 +3,10 @@
 
 TableRow::TableRow(vector<string> data)
 {
-	this->data = data;
+	this->data = move(data);
 }
 
-string TableRow::operator[](int index)
+string& TableRow::operator[](int index)
 {
 	if (index < 0 || index >= getSize()) 
 		throw out_of_range("Index out of range");
@@ -14,7 +14,7 @@ string TableRow::operator[](int index)
 	return data[index];
 }
 
-const string TableRow::operator[](int index) const
+const string& TableRow::operator[](int index) const
 {
 	if (index < 0 || index >= getSize())
 		throw out_of_range("Index out of range");
@@ -28,10 +28,7 @@ void TableRow::removeElement(int index)
 	if (index < 0 || index >= size)
 		return;
 
-	for (int i = index; i < size - 1; i++)
-		data[i] = data[i + 1];
-
-	data.pop_back();
+	data.erase(data.begin() + index);
 }
 
 void TableRow::parseFromFile(string data)
@@ -59,18 +56,9 @@ int TableRow::getSize() const
 	return data.size();
 }
 
-bool TableRow::swapElement(int index, string newElement)
-{
-	if (index < 0 || index >= getSize())
-		return 0;
-
-	data[index] = newElement;
-	return true;
-}
-
 void TableRow::addElement(string newElement)
 {
-	data.push_back(newElement);
+	data.push_back(move(newElement));
 }
 
 bool TableRow::swap(int first, int second)

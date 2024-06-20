@@ -35,9 +35,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="MyString.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="TableRow.h">
       <Filter>Header Files</Filter>
     </ClInclude>

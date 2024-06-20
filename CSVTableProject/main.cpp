@@ -15,5 +15,6 @@ int main()
 	}
 
 	CommandController::Release();
+
 	return 0;
 }

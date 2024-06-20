@@ -32,11 +32,19 @@ bool checkPerm(string perm)
 
 Table::Table(vector<TableRow> rows, const TableRow& names)
 {
-    this->rows = rows;
+    this->rows = move(rows);
     this->names = names;
 }
 
-TableRow Table::operator[](int index)
+TableRow& Table::operator[](int index)
+{
+    if (index < 0 || index >= getSize())
+        throw std::out_of_range("Index out of range");
+
+    return rows[index];
+}
+
+const TableRow& Table::operator[](int index) const
 {
     if (index < 0 || index >= getSize())
         throw std::out_of_range("Index out of range");
@@ -51,7 +59,7 @@ int Table::getSize() const
 
 void Table::addRow(TableRow row)
 {
-    rows.push_back(row);
+    rows.push_back(move(row));
 }
 
 bool Table::copyRow(int index)
@@ -69,12 +77,7 @@ void Table::removeRow(int index)
     if (index < 0 || index >= size)
         return;
 
-    for (int i = index; i < size - 1; i++)
-    {
-        rows[i] = rows[i + 1];
-    }
-
-    rows.pop_back();
+    rows.erase(rows.begin() + index);
 }
 
 void Table::removeColumn(int index)
@@ -347,7 +350,10 @@ void Table::removeDupes()
     for (int i = 0; i < size - 1; i++)
         for (int j = i + 1; j < size; j++)
             if (rows[i] == rows[j])
+            {
                 removeRow(j--);
+                --size;
+            }
 }
 
 void Table::sort(int index, bool order)
@@ -425,6 +431,7 @@ void Table::filter(int index, string sign, string other)
         }
 
         removeRow(i--);
+        size--;
     }
 }
 

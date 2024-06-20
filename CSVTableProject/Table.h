@@ -13,7 +13,9 @@ public:
 
     Table(vector<TableRow> rows, const TableRow& names);
 
-    TableRow operator[](int index);
+    TableRow& operator[](int index);
+
+    const TableRow& operator[](int index)const;
 
     int getSize() const;
 

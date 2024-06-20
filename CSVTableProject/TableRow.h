@@ -15,17 +15,15 @@ public:
 
     TableRow(vector<string> data);
 
-    string operator[](int index);
+    string& operator[](int index);
 
-    const string operator[](int index)const;
+    const string& operator[](int index)const;
 
     void removeElement(int index);
 
     void parseFromFile(string data);
 
     int getSize()const;
-
-    bool swapElement(int index, string newElement);
 
     void addElement(string newElement);
 

@@ -137,7 +137,6 @@
   <ItemGroup>
     <ClInclude Include="Command.h" />
     <ClInclude Include="CommandController.h" />
-    <ClInclude Include="MyString.h" />
     <ClInclude Include="Table.h" />
     <ClInclude Include="TableRow.h" />
   </ItemGroup>

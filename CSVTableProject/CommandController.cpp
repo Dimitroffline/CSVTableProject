@@ -22,6 +22,13 @@ bool CommandController::execute(string input)
         return 0;
     }
 
+    if (command[0] == "clear")
+    {
+        system("cls");
+
+        return 0;
+    }
+
     if (command[0] == "open")
     {
         if (argc != 2 && argc != 3)
@@ -339,10 +346,10 @@ bool CommandController::execute(string input)
         try
         {
             index = stoi(command[1]);
-            table.filter(index, sign, command[3]);
 
             undoTable = table;
             hasChanged = true;
+            table.filter(index, sign, command[3]);
             cout << "Filtered successfully.\n";
             return 0;
         }
@@ -354,10 +361,9 @@ bool CommandController::execute(string input)
                 return 0;
             }
 
-            table.filter(command[1], sign, command[3]);
-
             undoTable = table;
             hasChanged = true;
+            table.filter(command[1], sign, command[3]);
             cout << "Filtered successfully.\n";
             return 0;
         }
@@ -403,10 +409,10 @@ bool CommandController::execute(string input)
         try 
         {
             index = stoi(command[1]);
-            table.sort(index, ord);
 
             undoTable = table;
             hasChanged = true;
+            table.sort(index, ord);
             cout << "Table sorted successfully.\n";
             return 0;
         }
@@ -418,10 +424,9 @@ bool CommandController::execute(string input)
                 return 0;
             }
 
-            table.sort(command[1], ord);
-
             undoTable = table;
             hasChanged = true;
+            table.sort(command[1], ord);
             cout << "Table sorted successfully.\n";
             return 0;
         }
@@ -466,22 +471,10 @@ bool CommandController::loadFromFile(const char* filePath)
     }
 
     string line;
-    int size = 0;
-    table.~Table();
+    table = Table();
     
     while (getline(file, line))
     {
-        if (!size)
-        {
-            int len = line.size();
-
-            for (int i = 0; i < len; i++)
-                if (line[i] == ' ')
-                    ++size;
-
-            ++size;
-        }
-
         TableRow row;
         row.parseFromFile(line);
         table.addRow(row);
